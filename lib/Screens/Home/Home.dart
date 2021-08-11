@@ -71,15 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
           appBar: AppBar(
             backgroundColor: AppConsts.primaryColor,
             elevation: 0,
-            leading: InkWell(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Icon(
-                Icons.arrow_back_ios,
-                color: AppConsts.primaryTextColor,
-              ),
-            ),
             centerTitle: true,
             actions: [],
             title: Column(
@@ -132,11 +123,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   color: AppConsts.secTextColor,
                                 ),
                                 onPressed: () {
-                                  if (weight != null) {}
                                   homeBloc.add(AddWeight(
                                       weight: weight,
                                       time: DateTime.now().toString()));
-                                  weight = null;
+                                  setState(() {
+                                    weight = null;
+                                  });
                                 },
                               ))),
               ),
@@ -178,11 +170,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           onChanged: (var value) {
                             newWeight = value;
                           },
-                          readOnly: isUpdating,
                           decoration: InputDecoration(
-                              prefixIcon: Icon(
-                                Icons.person,
-                                color: AppConsts.secTextColor,
+                              prefixIcon: IconButton(
+                                icon: Icon(
+                                  Icons.edit,
+                                  color: AppConsts.secTextColor,
+                                ),
+                                onPressed: () {
+                                  homeBloc.add(UpdateWeight(
+                                      weight: newWeight,
+                                      time: DateTime.now().toString(),
+                                      id: snapshot.data.docs[index]['id']));
+                                },
                               ),
                               fillColor: AppConsts.primaryTextColor,
                               filled: true,
@@ -193,45 +192,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               hintStyle: AppConsts.blackBold,
                               suffixText: snapshot.data.docs[index]['time'],
                               suffixStyle: AppConsts.blackBold,
-                              prefix: IconButton(
+                              suffixIcon: IconButton(
                                 icon: Icon(
-                                  Icons.edit,
+                                  Icons.delete,
                                   color: AppConsts.secTextColor,
                                 ),
                                 onPressed: () {
-                                  setState(() {
-                                    isUpdating = !isUpdating;
-                                  });
-                                  homeBloc.add(UpdateWeight(
-                                      weight: newWeight,
-                                      time: DateTime.now().toString(),
+                                  homeBloc.add(DeleteWeight(
                                       id: snapshot.data.docs[index]['id']));
                                 },
-                              ),
-                              suffixIcon: isUpdating == true
-                                  ? IconButton(
-                                      icon: Icon(
-                                        Icons.delete,
-                                        color: AppConsts.secTextColor,
-                                      ),
-                                      onPressed: () {
-                                        homeBloc.add(DeleteWeight(
-                                            id: snapshot.data.docs[index]
-                                                ['id']));
-                                      },
-                                    )
-                                  : IconButton(
-                                      icon: Icon(
-                                        Icons.send,
-                                        color: AppConsts.secTextColor,
-                                      ),
-                                      onPressed: () {
-                                        homeBloc.add(AddWeight(
-                                            weight: weight,
-                                            time: DateTime.now().toString()));
-                                        weight = null;
-                                      },
-                                    ))),
+                              ))),
                     );
                   } else {
                     return CircularProgressIndicator();

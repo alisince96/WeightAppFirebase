@@ -11,7 +11,6 @@ class DatabaseServices {
       CollectionReference weightReference =
           firestoreInstance.collection('weights');
       var id = weightReference.doc().id;
-
       await weightReference
           .doc(id)
           .set({'id': id, 'weight': weight, 'time': time});
@@ -36,7 +35,6 @@ class DatabaseServices {
       final firestoreInstance = FirebaseFirestore.instance;
       CollectionReference weightReference =
           firestoreInstance.collection('weights');
-
       await weightReference
           .doc(id)
           .set({'id': id, 'weight': weight, 'time': time});
@@ -53,7 +51,6 @@ class DatabaseServices {
       final firestoreInstance = FirebaseFirestore.instance;
       CollectionReference weightReference =
           firestoreInstance.collection('weights');
-
       await weightReference.doc(id).delete();
       return true;
     } catch (e) {
